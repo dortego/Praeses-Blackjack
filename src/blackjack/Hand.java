@@ -8,26 +8,22 @@ import java.util.Iterator;
  */
 public class Hand {
   
-  private boolean busted;
   private String message;
   public ArrayList<Card> inHand;
   private int handVal;
-  private int count;
   
   public Hand() {
-    this.busted = false;
     this.message = "";
     this.inHand = new ArrayList<Card>() {};
     this.handVal = 0;
-    this.count = 0;
   }
   
-  public Card newCard(Deck currentDeck) {
-    Card drawnCard = currentDeck.dealCard();
+  public Card newCard(Deck deck) {
+    Card drawnCard = deck.dealCard();
     inHand.add(drawnCard);
     handVal += drawnCard.getValue();
-    checkHand();
-    count++;
+    checkHand(drawnCard);
+    
     return drawnCard;
   }
   
@@ -36,10 +32,9 @@ public class Hand {
   }
   
   // Reduce handVal if there is an ace in hand and handVal > 21 (aces can be high or low)
-  private void checkHand() {
-      if((handVal) > 21) {
-         if(aceInHand())
-            handVal -= 10;           
+  private void checkHand(Card card) {
+      if((handVal) > 21 && aceInHand()) {
+        handVal -= 10;           
       }
   }
   
@@ -49,10 +44,10 @@ public class Hand {
     Card cardCheck = null;
     Iterator<Card> scan = inHand.iterator();
 
-    while (scan.hasNext() && !result) {
+    while (scan.hasNext() && result == false) {
        cardCheck = scan.next();
        if(cardCheck.getValue() == 11) {
-//         cardCheck.setValue(1);
+         cardCheck.setValue(1);
          result = true;
        }
       

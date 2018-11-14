@@ -13,12 +13,6 @@ public class GamePlay {
   
   private Hand dealerHand;
   private Hand userHand;
-  
-  private int winCount = 0;
-  private int bustCount = 0;
-  private int lostCount = 0;
-  private int pushCount = 0;
-  private int blackjackCount;
 
   public GamePlay(Hand dealerHand, Hand userHand) throws IOException {
     this.deck = new Deck();
@@ -34,6 +28,7 @@ public class GamePlay {
     userHand.newCard(deck); 
   }
   
+  // displays the back of the card
   public BufferedImage getCardBack() {
     return this.deck.displayBackCard();
   }
@@ -53,9 +48,6 @@ public class GamePlay {
     if(userHand.getHandVal() == 21)
       won = true;
     
-    winCount++;
-    blackjackCount++;
-    
     return won;
   }
   
@@ -65,8 +57,6 @@ public class GamePlay {
 
     if(player.getHandVal() > 21)
       bust = true;
-
-    bustCount++;
  
     return bust;
   }
@@ -86,18 +76,12 @@ public class GamePlay {
     
     String message = "";
     if((userHand.getHandVal() < dealerHand.getHandVal()) && dealerHand.getHandVal() <= 21) {                
-      lostCount++;
-
       message = "You've lost";
     } 
     else if ((userHand.getHandVal() == dealerHand.getHandVal()) && dealerHand.getHandVal() <= 21) {
-      pushCount++;
-
       message = "Push";
     }  
     else {
-      winCount++;
-      
       message = "You've won";
     }
     

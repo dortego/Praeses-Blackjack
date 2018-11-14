@@ -3,11 +3,11 @@ package blackjack;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.security.SecureRandom;
 import javax.imageio.*;
 
 /**
- *
  * @author davidortego
  */
 public class Deck {
@@ -21,7 +21,6 @@ public class Deck {
     String[] suits = {"Diamonds", "Clubs", "Hearts", "Spades"};
     
     cards = new Card[52];
-    currentCard = 0;  
     
     // info used to extract individual cards from single image:
     final int WIDTH = 72;
@@ -29,7 +28,9 @@ public class Deck {
     final int ROWS = 4;
     final int COLS = 13;
     
-    BufferedImage wholeImg = ImageIO.read(new File("card-deck.png"));
+    URL url = Deck.class.getResource("/card-deck.png");
+//    BufferedImage wholeImg = ImageIO.read(new File("card-deck.png"));
+    BufferedImage wholeImg = ImageIO.read(url);
     BufferedImage tempCardImg;
     
     backCardImg = wholeImg.getSubimage(2 * WIDTH + 5, 3 * HEIGHT + 122, WIDTH, HEIGHT);
@@ -44,6 +45,7 @@ public class Deck {
     }
   }
   
+  // display card back
   public BufferedImage displayBackCard() {
     return backCardImg;
   }

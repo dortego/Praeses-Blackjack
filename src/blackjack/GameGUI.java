@@ -28,9 +28,7 @@ public class GameGUI {
   
   DatabaseHelper db = new DatabaseHelper();
   
-  //****************************************************************************
   //********    BOARD PANEL    *************************************************
-  //**************************************************************************** 
   private final Color tableColor = new Color(39, 119, 20); 
  
   // initial card labels and to-be-instantiated card labels:
@@ -45,15 +43,14 @@ public class GameGUI {
 
   // nested panels for dealer and player cards:
   JPanel dealerPanel = new JPanel();
+  JPanel centerPanel = new JPanel();
   JPanel userPanel = new JPanel();    
 
   // labels for the dealer and player hand values:
   JLabel dealerValLabel = new JLabel();
   JLabel userValLabel = new JLabel();
 
-  //****************************************************************************
   //********    CONTROL PANEL    ***********************************************
-  //****************************************************************************
   Color controlColor = new Color(212, 212, 212); 
   
   JButton hitBtn = new JButton();
@@ -77,10 +74,13 @@ public class GameGUI {
     //**********  BOARD PANEL  *************************************************
     dealerValLabel.setText(" Dealer: ");
     userValLabel.setText(" User: ");
+    dealerValLabel.setHorizontalAlignment(JLabel.RIGHT);
+    userValLabel.setHorizontalAlignment(JLabel.RIGHT);
     
     // nested panels for dealer and player cards (and vals):
-    dealerPanel.add(dealerValLabel);
-    userPanel.add(userValLabel);
+    centerPanel.setLayout(new BorderLayout());
+    centerPanel.add(dealerValLabel, BorderLayout.PAGE_START);
+    centerPanel.add(userValLabel, BorderLayout.PAGE_END);
 
     //***********  GAME HANDS INITIALIZING  ************************************
     game.initializeGame();
@@ -112,7 +112,7 @@ public class GameGUI {
        count++;
     }
     
-    // get back card image:
+    // get card back image:
     dealerCardLabel0 = new JLabel(new ImageIcon(game.getCardBack()));
     
     dealerPanel.add(dealerCardLabel0);
@@ -121,8 +121,8 @@ public class GameGUI {
     userPanel.add(userCardLabel1);
     userPanel.add(userCardLabel2);
     
-    dealerValLabel.setText("  Dealer:  " + dealerCard.getValue());
-    userValLabel.setText("  User:  " + game.handValue(userHand));
+    dealerValLabel.setText("  Dealer:  " + dealerCard.getValue() + "       ");
+    userValLabel.setText("  User:  " + game.handValue(userHand) + "       ");
     
     hitBtn.setEnabled(true);
     standBtn.setEnabled(true);
@@ -130,11 +130,13 @@ public class GameGUI {
     
     // match background of the table (game board):
     dealerPanel.setBackground(tableColor);
+    centerPanel.setBackground(tableColor);
     userPanel.setBackground(tableColor);
     
     boardPanel = new JPanel();
     boardPanel.setLayout(new BorderLayout());
     boardPanel.add(dealerPanel, BorderLayout.NORTH);
+    boardPanel.add(centerPanel, BorderLayout.CENTER);    
     boardPanel.add(userPanel, BorderLayout.SOUTH);    
     boardPanel.setPreferredSize(new Dimension(500, 400));
     boardPanel.setBackground(tableColor);
@@ -157,11 +159,17 @@ public class GameGUI {
       }
     });
     
-    controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-    controlPanel.add(hitBtn);
-    controlPanel.add(standBtn);
-    controlPanel.add(quitBtn);
-    controlPanel.setPreferredSize(new Dimension(150, 400));
+    controlPanel.setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridwidth = GridBagConstraints.REMAINDER;
+    gbc.anchor = GridBagConstraints.CENTER;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    
+    controlPanel.add(hitBtn, gbc);
+    controlPanel.add(standBtn, gbc);
+    controlPanel.add(quitBtn, gbc);
+    gbc.weighty = 1;
+    controlPanel.setPreferredSize(new Dimension(100, 400));
     controlPanel.setBackground(controlColor);
     
     //***********  GAME TABLE FRAME  *******************************************
@@ -172,6 +180,7 @@ public class GameGUI {
     frame.getContentPane().add(boardPanel);
     frame.getContentPane().add(controlPanel);
     frame.pack();
+    frame.setLocationRelativeTo(null);
     frame.setVisible(true);
     
     // check if user was dealt blackjack right off the bat:
@@ -186,7 +195,7 @@ public class GameGUI {
       userPanel.add(newUserCardLabel);
       userPanel.repaint();
       
-      userValLabel.setText("  Player:   " + game.handValue(userHand));
+      userValLabel.setText("  Player:   " + game.handValue(userHand) + "       ");
       
       int option = -1;
       
@@ -246,8 +255,8 @@ public class GameGUI {
 
       dealerHand = game.dealerAI();
       dealerPanel.removeAll();
-      dealerPanel.add(dealerValLabel);
       dealerValLabel.setText(" " + dealerValLabel.getText());  
+      centerPanel.add(dealerValLabel, BorderLayout.PAGE_START);
 
       // iterate through cards and re-display
       Card dealerhitCard = null;
@@ -258,8 +267,8 @@ public class GameGUI {
         dealerPanel.add(newDealerCardLabel);
       }
 
-      dealerValLabel.setText("Dealer: " + game.handValue(dealerHand));
-      userValLabel.setText("User: " + game.handValue(userHand));
+      dealerValLabel.setText("Dealer: " + game.handValue(dealerHand) + "       ");
+      userValLabel.setText("User: " + game.handValue(userHand) + "       ");
 
       int option = -1;
       String message = game.outcome();
@@ -324,6 +333,21 @@ public class GameGUI {
         Logger.getLogger(GamePlay.class.getName()).log(Level.SEVERE, null, ex);
       }
      }
+    
+    //***** user busted:
+      if(game.hasBusted(userHand)) {
+        option = JOptionPane.showConfirmDialog(frame, "You've busted!\nPlay again?", "", JOptionPane.YES_NO_OPTION);
+        System.out.println("Bust");
+        hitBtn.setEnabled(false);
+        standBtn.setEnabled(false);
+        
+        // increment bust in database:
+        try {
+          db.updateBust();
+        } catch (ClassNotFoundException | SQLException ex) {
+          Logger.getLogger(GamePlay.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      }
     
     // play again or not:
       if(option == 0) {   // yes = 0

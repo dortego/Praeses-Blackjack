@@ -52,19 +52,6 @@ public class DatabaseHelper {
       }
     }
   }
-//  
-//  public void addStat(int games_played, int won, int lost, int bust, int push, int blackjacks) throws ClassNotFoundException, SQLException {
-//    if(con == null) 
-//      getConnection();
-//    
-//    PreparedStatement prep = con.prepareStatement("INSERT INTO stats values(?,?,?,?,?,?,?);");
-//    prep.setInt(2, won);
-//    prep.setInt(3, lost);
-//    prep.setInt(4, bust);
-//    prep.setInt(5, push);
-//    prep.setInt(6, blackjacks);
-//    prep.executeUpdate();
-//  }
   
   // methods to increment stat counts:
   public void updateGames() throws ClassNotFoundException, SQLException {

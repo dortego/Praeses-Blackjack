@@ -13,9 +13,12 @@ import javax.swing.*;
  
 
 public class Driver extends JFrame implements ActionListener {
+  
+  JFrame frame = new JFrame();
   private JLabel l1, l2;
   private JButton statsButton;
   private JButton playButton;
+  private JButton quitButton;
   JFrame statsFrame = new JFrame();
   JTextArea textArea = new JTextArea();
  
@@ -23,7 +26,6 @@ public class Driver extends JFrame implements ActionListener {
   ResultSet rs;
  
   public Driver() {
-    JFrame frame = new JFrame();
     l1 = new JLabel("Praeses Blackjack Game");
     l1.setForeground(Color.blue);
     l1.setFont(new Font("Courier", Font.BOLD, 20));
@@ -33,12 +35,14 @@ public class Driver extends JFrame implements ActionListener {
     l2.setFont(new Font("Courier", Font.BOLD, 15));
     statsButton = new JButton("Game Stats");
     playButton = new JButton("Play");
+    quitButton = new JButton("Quit");
 
     l1.setBounds(80, 40, 400, 30);
     l2.setBounds(100, 80, 400, 30);
     statsButton.setBounds(75, 140, 100, 30);
     playButton.setBounds(200, 140, 100, 30);
-
+    quitButton.setBounds(200, 200, 100, 30);
+    
     textArea.setFont(new Font("Courier", Font.PLAIN, 20));
     
     // *** display stats from database: ***
@@ -75,6 +79,7 @@ public class Driver extends JFrame implements ActionListener {
         statsFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         statsFrame.setTitle("Game Stats");
         statsFrame.setSize(400, 400);
+        statsFrame.setLocationRelativeTo(null);
         statsFrame.setVisible(true);
       }
     });
@@ -90,13 +95,21 @@ public class Driver extends JFrame implements ActionListener {
       }
     });
 
+    quitButton.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        frame.dispose();
+      }
+    });
+    
     frame.add(l1);
     frame.add(l2);
     frame.add(statsButton);
     frame.add(playButton);
+    frame.add(quitButton);
 
     frame.setSize(400, 300);
     frame.setLayout(null);
+    frame.setLocationRelativeTo(null);
     frame.setVisible(true);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
